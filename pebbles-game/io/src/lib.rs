@@ -1,16 +1,13 @@
- #![no_std]
-use gstd::prelude::*;
+#![no_std]
+
 use gmeta::{In, InOut, Metadata, Out};
+use gstd::prelude::*;
 
-pub struct PebblesMetadata;
-
-impl Metadata for PebblesMetadata {
-    type Init = In<PebblesInit>;
-    type Handle = InOut<PebblesAction, PebblesEvent>;
-    type State = Out<GameState>;
-    type Reply = ();
-    type Others = ();
-    type Signal = ();
+#[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
+pub enum DifficultyLevel {
+    #[default]
+    Easy,
+    Hard,
 }
 
 #[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
@@ -18,13 +15,6 @@ pub struct PebblesInit {
     pub difficulty: DifficultyLevel,
     pub pebbles_count: u32,
     pub max_pebbles_per_turn: u32,
-}
-
-#[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
-pub enum DifficultyLevel {
-    #[default]
-    Easy,
-    Hard,
 }
 
 #[derive(Debug, Clone, Encode, Decode, TypeInfo)]
@@ -38,17 +28,28 @@ pub enum PebblesAction {
     },
 }
 
-#[derive(Debug, Clone, Encode, Decode, TypeInfo)]
-pub enum PebblesEvent {
-    CounterTurn(u32),
-    Won(Player),
-}
-
-#[derive(Debug, Default, Clone, Encode, Decode, TypeInfo,PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
 pub enum Player {
     #[default]
     User,
     Program,
+}
+
+impl PartialEq for Player {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Player::User, Player::User) => true,
+            (Player::Program, Player::Program) => true,
+            _ => false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Encode, Decode, TypeInfo)]
+pub enum PebblesEvent {
+    CounterTurn(u32),
+    Won(Player),
+    InvalidMove,
 }
 
 #[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
@@ -61,3 +62,13 @@ pub struct GameState {
     pub winner: Option<Player>,
 }
 
+pub struct PebblesMetadata;
+
+impl Metadata for PebblesMetadata {
+    type Init = In<PebblesInit>;
+    type Handle = InOut<PebblesAction, PebblesEvent>;
+    type State = Out<GameState>;
+    type Reply = ();
+    type Others = ();
+    type Signal = ();
+}
