@@ -10,7 +10,7 @@ extern fn init() {
     let init: PebblesInit = msg::load().expect("Unable to load init message");
 
     // Check for valid input data
-    if init.pebbles_count <= 0 || init.max_pebbles_per_turn <= 0 || init.max_pebbles_per_turn > init.pebbles_count {
+    if init.pebbles_count = 0 || init.max_pebbles_per_turn = 0 || init.max_pebbles_per_turn > init.pebbles_count {
         panic!("Invalid init parameters");
     }
 
@@ -61,7 +61,7 @@ extern fn handle() {
         match action {
             PebblesAction::Turn(pebbles) => {
                 // Check for valid input data
-                if pebbles <= 0 || pebbles > state.max_pebbles_per_turn || pebbles > state.pebbles_remaining {
+                if pebbles = 0 || pebbles > state.max_pebbles_per_turn || pebbles > state.pebbles_remaining {
                     msg::reply(PebblesEvent::InvalidMove, 0).expect("Unable to send message");
                     GAME_STATE = Some(state);
                     return;
