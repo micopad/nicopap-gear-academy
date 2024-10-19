@@ -9,11 +9,7 @@ static mut GAME_STATE: Option<GameState> = None;
 extern fn init() {
     let init: PebblesInit = msg::load().expect("Unable to load init message");
 
-    // Check for valid input data
-    if init.pebbles_count = 0 || init.max_pebbles_per_turn = 0 || init.max_pebbles_per_turn > init.pebbles_count {
-        panic!("Invalid init parameters");
-    }
-
+   
     // Choose the first player
     let first_player = if get_random_u32() % 2 == 0 {
         Player::User
